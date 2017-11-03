@@ -69,11 +69,14 @@ function! multiselect#ClearSelection(fline, lline) " {{{
   endif
 endfunction " }}}
 
-function! multiselect#ShowSelections() " {{{
+function! multiselect#ShowSelections(isInvert) " {{{
   if MSSelectionExists()
-    for sel in MSGetSelections()
+    echohl Title
+    echo a:isInvert ? 'Lines not selected' : 'Current selected lines'
+    echohl None
+    for sel in s:GetSelections(a:isInvert)
       let nLines = ((MSLL(sel) - MSFL(sel)) + 1)
-      echo MSFL(sel).','.MSLL(sel) '(' . nLines 'lines)'
+      echo MSFL(sel).','.MSLL(sel) "\t(" . nLines 'line'.(nLines == 1 ? '':'s').')'
     endfor
   endif
 endfunction " }}}
@@ -160,7 +163,7 @@ function! s:DrawSelections() " {{{
   call genutils#ResetHardPosition('RefreshSelections')
 endfunction " }}}
 
-function! multiselect#InvertSelections(fline, lline) " {{{
+function! s:InvertedSelections(fline, lline) " {{{
   let nexSel = []
   let invSel = []
   let intersectedAny = 0
@@ -212,12 +215,21 @@ function! multiselect#InvertSelections(fline, lline) " {{{
     call add(invSel, [fline, lline])
   endif
 
+  return invSel
+endfunction " }}}
+
+function! multiselect#InvertSelections(fline, lline) " {{{
+  let invSel = s:InvertedSelections(a:fline, a:lline)
   if len(invSel) == 0
     MSClear
   else
     call s:SetSelRanges(invSel)
     MSRefresh
   endif
+endfunction " }}}
+
+function! s:GetSelections(isInvert) " {{{
+  return (a:isInvert ? s:InvertedSelections(1, line('$')) : MSGetSelections())
 endfunction " }}}
 
 " Add selection ranges for the matched pattern.
@@ -278,7 +290,7 @@ function! multiselect#AddSelectionsByExpr(fline, lline, expr, negate, ...) " {{{
   echo 'Total selections added: '.cnt
 endfunction " }}}
 
-function! multiselect#ExecCmdOnSelection(theCommand, normalMode) " {{{
+function! multiselect#ExecCmdOnSelection(theCommand, normalMode, isInvert) " {{{
   if !MSSelectionExists()
     return
   endif
@@ -287,7 +299,7 @@ function! multiselect#ExecCmdOnSelection(theCommand, normalMode) " {{{
   let bufNr = bufnr('%') + 0 
   let saveMarkPos = getpos("'t")
   try
-    for curSel in MSGetSelections()
+    for curSel in s:GetSelections(a:isInvert)
       let fl = MSFL(curSel) + offset
       let ll = MSLL(curSel) + offset
       if ll != line('$')

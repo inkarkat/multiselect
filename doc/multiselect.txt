@@ -90,8 +90,17 @@ selection regions you can use mouse or keyboard.
       equivalent maps) to execute commands on them. Ex:
         - Delete all the lines in the current selections >
             MSExecCmd d
+<         Because this is so common, there's a special command that also
+          cleans up the selection: >
+            MSExecDelete
 <       - Convert all the characters in the current selections to upper case. >
             MSExecNormalCmd gU
+<   - You can also operate on the inverse of the selection by appending [!] to
+      |:MSExecCmd|, |:MSExecNormalCmd|, |:MSExecDelete|, |:MSShow| and
+      |:MSPrint|. Sometimes, it's easier and less visually distracting to
+      select the opposite of what you want to work on.
+      Alternatively, toggle the selection via >
+            %MSInvert
 <   - Use |:MSClear| (or its map) to clear the selection.
 ==============================================================================
 
@@ -103,10 +112,11 @@ not include the common prefix of <Leader>):
 
                                             *:MSAdd*      *:MSDelete* *:MSClear*
                                             *:MSRestore*  *:MSRefresh* *:MSHide*
-                                            *:MSInvert*   *:MSShow*    
+                                            *:MSInvert*   *:MSShow*   *:MSPrint*
                                             *:MSNext*     *:MSPrev*
                                             *:MSMatchAdd* *:MSVMatchAdd*
                                             *:MSExecCmd*  *:MSExecNormalCmd*    
+                                            *:MSExecDelete*
      Mapping Name           Default Mode Description~
      AddSelection               msa  n,v Add current selection to the
                                          selection list (MSAdd).
@@ -128,9 +138,13 @@ not include the common prefix of <Leader>):
                                          selections (MSExecCmd).
      ExecNormalCmdOnSelection   msn  n   Execute a normal mode command on all
                                          the selections (MSExecNormalCmd).
+     ExecDelete              (none)  n   Delete all selected lines
+                                         (MSExecDelete).
      ShowSelections             mss  n   Dump all the current selections on
                                          the screen as "startline,endline"
                                          pairs (MSShow).
+     PrintSelections            msp  n   Print all current selections like
+                                         with |:number| (MSPrint).
      NextSelection              ms]  n   Take cursor to the next selection
                                          (MSNext).
      PrevSelection              ms[  n   Take cursor to the previous selection

@@ -61,11 +61,16 @@ command! MSRestore :call multiselect#RestoreSelections()
 command! MSRefresh :call multiselect#RefreshSelections()
 command! -range MSInvert :call multiselect#InvertSelections(<line1>, <line2>)
 command! MSHide :call multiselect#HideSelections()
-command! -nargs=1 -complete=command MSExecCmd
-      \ :call multiselect#ExecCmdOnSelection(<q-args>, 0)
-command! -nargs=1 -complete=command MSExecNormalCmd
-      \ :call multiselect#ExecCmdOnSelection(<q-args>, 1)
-command! MSShow :call multiselect#ShowSelections()
+command! -bang -nargs=1 -complete=command MSExecCmd
+      \ :call multiselect#ExecCmdOnSelection(<q-args>, 0, <bang>0)
+command! -bang -nargs=1 -complete=command MSExecNormalCmd
+      \ :call multiselect#ExecCmdOnSelection(<q-args>, 1, <bang>0)
+command! -bang MSExecDelete
+      \ :silent call multiselect#ExecCmdOnSelection('delete _', 0, <bang>0)
+      \ |call multiselect#ClearSelection(1, line('$'))
+      " Note: Use :silent to suppress the reporting of deleted lines.
+command! -bang MSShow :call multiselect#ShowSelections(<bang>0)
+command! -bang MSPrint :call multiselect#ExecCmdOnSelection('number', 0, <bang>0)
 command! MSNext :call multiselect#NextSelection(1)
 command! MSPrev :call multiselect#NextSelection(-1)
 command! -range=% -nargs=1 MSMatchAdd :call multiselect#AddSelectionsByMatch(<line1>,
@@ -100,37 +105,39 @@ if (! exists("no_multiselect_mousemaps") || ! no_multiselect_mousemaps)
         \ '<CR><'.g:multiselMouseSelAddKey.'Release>'
 endif
 
-if maparg('<Enter>', 'v') == ''
-  vnoremap <Enter> m`:MSInvert<Enter>``
+if maparg('<Enter>', 'x') == ''
+  xnoremap <Enter> m`:MSInvert<Enter>``
 endif
 
 function! s:AddMap(name, map, cmd, mode, silent)
-  if (!hasmapto('<Plug>MS'.a:name, a:mode))
+  if (!hasmapto('<Plug>MS'.a:name, a:mode) && !empty(a:map))
     exec a:mode.'map <unique> <Leader>'.a:map.' <Plug>MS'.a:name
   endif
   exec a:mode.'map '.(a:silent?'<silent> ':'').'<script> <Plug>MS'.a:name.
         \ ' '.a:cmd
 endfunction
 
-call s:AddMap('AddSelection', 'msa', 'm`:MSAdd<CR>``', 'v', 1)
+call s:AddMap('AddSelection', 'msa', 'm`:MSAdd<CR>``', 'x', 1)
 call s:AddMap('AddSelection', 'msa', ':MSAdd<CR>', 'n', 1)
 call s:AddMap('DeleteSelection', 'msd', ':MSDelete<CR>', 'n', 1)
-call s:AddMap('ClearSelection', 'msc', ':MSClear<CR>', 'v', 1)
+call s:AddMap('ClearSelection', 'msc', ':MSClear<CR>', 'x', 1)
 call s:AddMap('ClearSelection', 'msc', ':MSClear<CR>', 'n', 1)
 call s:AddMap('RestoreSelections', 'msr', ':MSRestore<CR>', 'n', 1)
 call s:AddMap('RefreshSelections', 'msf', ':MSRefresh<CR>', 'n', 1)
 call s:AddMap('HideSelections', 'msh', ':MSHide<CR>', 'n', 1)
 call s:AddMap('InvertSelections', 'msi', ':MSInvert<CR>', 'n', 1)
-call s:AddMap('InvertSelections', 'msi', ':MSInvert<CR>', 'v', 1)
+call s:AddMap('InvertSelections', 'msi', ':MSInvert<CR>', 'x', 1)
 call s:AddMap('ShowSelections', 'mss', ':MSShow<CR>', 'n', 1)
+call s:AddMap('PrintSelections', 'msp', ':MSPrint<CR>', 'n', 1)
 call s:AddMap('NextSelection', 'ms]', ':MSNext<CR>', 'n', 1)
 call s:AddMap('PrevSelection', 'ms[', ':MSPrev<CR>', 'n', 1)
 call s:AddMap('ExecCmdOnSelection', 'ms:', ':MSExecCmd<Space>', 'n', 0)
 call s:AddMap('ExecNormalCmdOnSelection', 'msn', ':MSExecNormalCmd<Space>', 'n',
       \ 0)
-call s:AddMap('MatchAddSelection', 'msm', ':MSMatchAdd<Space>', 'v', 0)
+call s:AddMap('ExecDelete', '', ':MSExecDelete<CR>', 'n', 1)
+call s:AddMap('MatchAddSelection', 'msm', ':MSMatchAdd<Space>', 'x', 0)
 call s:AddMap('MatchAddSelection', 'msm', ':MSMatchAdd<Space>', 'n', 0)
-call s:AddMap('VMatchAddSelection', 'msv', ':MSVMatchAdd<Space>', 'v', 0)
+call s:AddMap('VMatchAddSelection', 'msv', ':MSVMatchAdd<Space>', 'x', 0)
 call s:AddMap('VMatchAddSelection', 'msv', ':MSVMatchAdd<Space>', 'n', 0)
 
 delf s:AddMap
