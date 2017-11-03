@@ -93,6 +93,8 @@ selection regions you can use mouse or keyboard.
 <         Because this is so common, there's a special command that also
           cleans up the selection: >
             MSExecDelete
+<         Likewise, there's a shortcut command for |:substitute|: >
+            MSSubstitute/foo/bar/g
 <       - Convert all the characters in the current selections to upper case. >
             MSExecNormalCmd gU
 <   - You can also operate on the inverse of the selection by appending [!] to
@@ -115,8 +117,8 @@ not include the common prefix of <Leader>):
                                             *:MSInvert*   *:MSShow*   *:MSPrint*
                                             *:MSNext*     *:MSPrev*
                                             *:MSMatchAdd* *:MSVMatchAdd*
-                                            *:MSExecCmd*  *:MSExecNormalCmd*    
-                                            *:MSExecDelete*
+                                            *:MSExecCmd*  *:MSExecNormalCmd*
+                                            *:MSExecDelete* *:MSSubstitute*
      Mapping Name           Default Mode Description~
      AddSelection               msa  n,v Add current selection to the
                                          selection list (MSAdd).
@@ -132,7 +134,7 @@ not include the common prefix of <Leader>):
      InvertSelections           msi  n,v Invert the entire or selected
                                          selection (MSInvert).
                              <CR>/   v   If not in use.
-                             <Enter>     
+                             <Enter>
                           Ctrl+LeftMouse Invert selections using mouse.
      ExecCmdOnSelection         ms:  n   Execute a ex mode command on all the
                                          selections (MSExecCmd).
@@ -240,7 +242,7 @@ using the MSAddSelectionsByExpr() function as described below. Ex:
   You could also remove the need to press modifiers by setting
   g:multiselMouseSelAddMod to an empty string. You will then essentially replace
   the normal Vim selection mechanism with that of the plugin.
-  
+
   Modifying this variable at :ex prompt doesn't have any impact on the current
   session, unless you reload the plugin. To reload, first unlet the
   g:loaded_multiselect variable >
@@ -324,6 +326,10 @@ accessible to the expression as a:1, a:2 etc. (see |:function|)
 < You can then execute commands such as a substitution: >
 
         MSExecCmd s/old/new/g
+
+< Some common commands have multiselect shortcuts; this is equivalent: >
+
+        MSSubstitute/old/new/g
 <
 ======.=====================================================================
 
@@ -370,7 +376,7 @@ accessible to the expression as a:1, a:2 etc. (see |:function|)
   lines in comments (or more specifically perl pod) etc. and do operations such
   as running a spell check on them.
 - New global function MSAddSelectionsByExpr() for creating new commands such as
-  MSMatchAddBySynGroup and MSMatchAdd by the user. 
+  MSMatchAddBySynGroup and MSMatchAdd by the user.
 
                                             *multiselect-changes-1.2*
 - MSInvert command now works better.
@@ -378,7 +384,7 @@ accessible to the expression as a:1, a:2 etc. (see |:function|)
                                             *multiselect-changes-1.1*
 - Full support for mouse in making multiple selections. Works pretty much like
   in MS word.
-- Improved behavior for MSInvert. 
+- Improved behavior for MSInvert.
 
                                             *multiselect-changes-1.0*
 - Initial release.

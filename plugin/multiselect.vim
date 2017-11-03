@@ -69,6 +69,8 @@ command! -bang MSExecDelete
       \ :silent call multiselect#ExecCmdOnSelection('delete _', 0, <bang>0)
       \ |call multiselect#ClearSelection(1, line('$'))
       " Note: Use :silent to suppress the reporting of deleted lines.
+command! -bang -nargs=1 -complete=command MSSubstitute
+      \ :call multiselect#ExecCmdOnSelection('substitute' . <q-args>, 0, <bang>0)
 command! -bang MSShow :call multiselect#ShowSelections(<bang>0)
 command! -bang MSPrint :call multiselect#ExecCmdOnSelection('number', 0, <bang>0)
 command! MSNext :call multiselect#NextSelection(1)
