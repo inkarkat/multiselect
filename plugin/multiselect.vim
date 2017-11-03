@@ -105,8 +105,9 @@ if (! exists("no_multiselect_mousemaps") || ! no_multiselect_mousemaps)
         \ '<CR><'.g:multiselMouseSelAddKey.'Release>'
 endif
 
-if maparg('<Enter>', 'x') == ''
-  xnoremap <Enter> m`:MSInvert<Enter>``
+vnoremap <silent> <Plug>MSSelect m`:MSInvert<Enter>g``
+if ! hasmapto('<Plug>MSSelect', 'x')
+  xmap <Enter> <Plug>MSSelect
 endif
 
 function! s:AddMap(name, map, cmd, mode, silent)
