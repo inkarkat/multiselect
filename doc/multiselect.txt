@@ -1,10 +1,8 @@
 *multiselect.txt*  Create multiple selections and operate
                     Requires Vim 7.0
-            Last Change: 08-Sep-2006 @ 22:18
-          Since Version: 2.0
-               Revision: 1.0.0
-         Plugin Version: 2.2
+            Last Change: 10-Jun-2020
                  Author: Hari Krishna Dara (hari_vim at yahoo dot com)
+                 Author: Ingo Karkat <ingo@karkat.de>
 
                                             *multiselect-introduction*
                                             *multiselect-plugin*
@@ -49,6 +47,7 @@ OVERVIEW                                    *multiselect-overview*
     - To install, download the latest versions of these two plugins:
         multiselect: http://www.vim.org/script.php?script_id=953
         genutils:  http://vim.sourceforge.net/script.php?script_id=197
+        ingo-library: http://vim.sourceforge.net/script.php?script_id=4433, version 1.033 or higher.
     - Extract the zip archives in to your runtime directory (.vim or vimfiles
       under your HOME directory).
     - Start a new instance or go to an existing instance of vim.
