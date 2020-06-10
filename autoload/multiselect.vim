@@ -269,11 +269,14 @@ function! multiselect#AddSelectionsByExpr(fline, lline, expr, negate, ...) " {{{
     exec i | " Position the cursor on the line.
     let result = eval(a:expr)
     let result = ((!a:negate && result) || (a:negate && !result))
-    if result && (i <= a:lline) && i != line('$')
+    if result && (i <= a:lline) && i < line('$')
       if fl == -1
         let fl = i
       endif
     else
+      if result && fl == -1 && i == line('$')
+	let fl = i
+      endif
       if fl != -1
         " When last line also matches, we want to include it too.
         let ll = i - (result ? 0 : 1)
