@@ -93,14 +93,17 @@ selection regions you can use mouse or keyboard.
 <         Because this is so common, there's a special command that also
           cleans up the selection: >
             MSExecDelete
+<         Likewise, there's a shortcut command for |:yank|ing all lines into
+          the passed / default register: >
+            MSExecYank a
 <         Likewise, there's a shortcut command for |:substitute|: >
             MSSubstitute/foo/bar/g
 <       - Convert all the characters in the current selections to upper case. >
             MSExecNormalCmd gU
 <   - You can also operate on the inverse of the selection by appending [!] to
-      |:MSExecCmd|, |:MSExecNormalCmd|, |:MSExecDelete|, |:MSShow| and
-      |:MSPrint|. Sometimes, it's easier and less visually distracting to
-      select the opposite of what you want to work on.
+      |:MSExecCmd|, |:MSExecNormalCmd|, |:MSExecDelete|, |:MSExecYank|,
+      |:MSShow| and |:MSPrint|. Sometimes, it's easier and less visually
+      distracting to select the opposite of what you want to work on.
       Alternatively, toggle the selection via >
             %MSInvert
 <   - Use |:MSClear| (or its map) to clear the selection.
@@ -119,6 +122,7 @@ not include the common prefix of <Leader>):
                                             *:MSMatchAdd* *:MSVMatchAdd*
                                             *:MSExecCmd*  *:MSExecNormalCmd*
                                             *:MSExecDelete* *:MSSubstitute*
+                                            *:MSExecYank*
      Mapping Name           Default Mode Description~
      AddSelection               msa  n,v Add current selection to the
                                          selection list (MSAdd).
@@ -142,6 +146,7 @@ not include the common prefix of <Leader>):
                                          the selections (MSExecNormalCmd).
      ExecDelete              (none)  n   Delete all selected lines
                                          (MSExecDelete).
+     ExecYank                   msy  n   Yank all selected lines (MSExecYank).
      ShowSelections             mss  n   Dump all the current selections on
                                          the screen as "startline,endline"
                                          pairs (MSShow).
@@ -344,8 +349,7 @@ accessible to the expression as a:1, a:2 etc. (see |:function|)
 - While executing commands on multiple ranges, there should be a way to execute
   at least normal commands on each line in the range instead of each range
   (useful for running on plugin windows).
-- Implement yank and paste selections (\msy, \msp), but how should they really
-  work?
+- Implement paste selections (\msp), but how should it really work?
 - Support different visual modes. The block mode could be quite complicated to
   implement.
 ==============================================================================

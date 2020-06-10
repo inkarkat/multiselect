@@ -69,6 +69,14 @@ command! -bang MSExecDelete
       \ :silent call multiselect#ExecCmdOnSelection('delete _', 0, <bang>0)
       \ |call multiselect#ClearSelection(1, line('$'))
       " Note: Use :silent to suppress the reporting of deleted lines.
+command! -bang -register MSExecYank
+      \ :if <q-register> =~# '^\u$'
+      \ | call ingo#register#accumulate#ExecuteOrFunc(<q-register>, "call multiselect#ExecCmdOnSelection('yank v:val', 0, <bang>0)")
+      \ |else
+      \ | call setreg(<q-register>, '')
+      \ | call ingo#register#accumulate#ExecuteOrFunc(<q-register>, "call multiselect#ExecCmdOnSelection('yank v:val', 0, <bang>0)")
+      \ | call setreg(<q-register>, substitute(getreg(<q-register>), '^\n', '', ''))
+      \ |endif
 command! -bang -nargs=1 -complete=command MSSubstitute
       \ :call multiselect#ExecCmdOnSelection('substitute' . <q-args>, 0, <bang>0)
 command! -bang MSShow :call multiselect#ShowSelections(<bang>0)
@@ -138,6 +146,7 @@ call s:AddMap('ExecCmdOnSelection', 'ms:', ':MSExecCmd<Space>', 'n', 0)
 call s:AddMap('ExecNormalCmdOnSelection', 'msn', ':MSExecNormalCmd<Space>', 'n',
       \ 0)
 call s:AddMap('ExecDelete', '', ':MSExecDelete<CR>', 'n', 1)
+call s:AddMap('ExecYank', 'msy', ':execute "MSExecYank" v:register<CR>', 'n', 1)
 call s:AddMap('MatchAddSelection', 'msm', ':MSMatchAdd<Space>', 'x', 0)
 call s:AddMap('MatchAddSelection', 'msm', ':MSMatchAdd<Space>', 'n', 0)
 call s:AddMap('VMatchAddSelection', 'msv', ':MSVMatchAdd<Space>', 'x', 0)
