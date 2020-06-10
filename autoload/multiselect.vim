@@ -246,9 +246,16 @@ function! multiselect#AddSelectionsBySynGroup(fline, lline, group, negate) " {{{
 endfunction " }}}
 
 function! multiselect#AddSelectionsByDiffHlGroup(fline, lline, group, negate) " {{{
-  call multiselect#AddSelectionsByExpr(a:fline, a:lline,
-        \ 'synIDtrans(diff_hlID(line("."), strlen(getline(line("."))) - 1)) == hlID(a:1)',
-        \ a:negate, a:group)
+  if a:group ==? 'DiffChange'
+    " Check only the last character, accept both DiffChange and DiffText.
+    let expr = 'index([hlID("DiffChange"), hlID("DiffText")], synIDtrans(diff_hlID(line("."), strlen(getline(line("."))) - 1))) != -1'
+  elseif a:group ==? 'DiffText'
+    " Check the whole line minus indent; assert actually changed text throughout only.
+    let expr = 'empty(filter(map(range(searchpos("\\S\\|$", "cnW", line("."))[1] , strlen(getline(line(".")))), ''synIDtrans(diff_hlID(line("."), v:val)) != hlID("DiffText")''), "v:val"))'
+  else
+    let expr = 'synIDtrans(diff_hlID(line("."), strlen(getline(line("."))) - 1)) == hlID(a:1)'
+  endif
+  call multiselect#AddSelectionsByExpr(a:fline, a:lline, expr, a:negate, a:group)
 endfunction " }}}
 
 function! multiselect#AddSelectionsByExpr(fline, lline, expr, negate, ...) " {{{
